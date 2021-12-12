@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Three.js learning 2</title>
+</head>
+
+<body>
+	<div id="app"></div>
+        <script type="module">
+            import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
+            import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js';
+
+            let scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x808080, 2000, 4000);
+
+            let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 8000);
+            camera.position.set(0, 0, -1500);
+
+            let ambientLight = new THREE.AmbientLight(0x0000ff);
+            let light = new THREE.DirectionalLight(0xffffff, 0.7);
+            light.position.set(-800, 900, 300);
+
+            // anitialias seems to have no effect
+            let renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // CONTROLS
+            let cameraControls = new OrbitControls(camera, renderer.domElement);
+            cameraControls.target.set(0, 0, 0);
+
+            const app = document.getElementById("app");
+            app.appendChild(renderer.domElement);
+
+            function fillScene() {
+                scene.add(camera);
+
+                // LIGHTS
+                scene.add(ambientLight);
+                scene.add(light);
+
+                const ball = createSphere();
+                scene.add(ball);
+            }
+
+            function createSphere() {
+                const material = new THREE.MeshLambertMaterial({
+                    color: 0xffffff,
+                    wireframe: true
+                });
+
+                const geometry = new THREE.SphereGeometry(400, 64, 32);
+                const sphere = new THREE.Mesh(geometry, material);
+
+                // apply flat shading
+                geometry.computeFlatVertexNormals();
+
+                return sphere;
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+
+            fillScene();
+            animate();
+        </script>
+    </body>
+
+</html>
